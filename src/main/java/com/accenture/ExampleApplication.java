@@ -14,12 +14,12 @@ public class ExampleApplication {
 	}
 	
 	@RequestMapping("/")
-	public String index() {
+	public String sdf() {
 		return "index page";
 	}
 
 	@RequestMapping("/welcome")
-	public String welcome() {
+	public String rty() {
 		return "welcome page";
 	}
 }
