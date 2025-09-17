@@ -1,0 +1,14 @@
+spring:
+  cloud:
+    aws:
+      region:
+        static: us-east-1
+      credentials:
+        profile-name: default
+
+app:
+  sns:
+    topic-arn: arn:aws:sns:us-east-1:775727899903:EmployeeTopic.fifo
+  sqs:
+    # queue-name: EmployeeQueue.fifo
+    queue-url: arn:aws:sqs:us-east-1:775727899903:EmployeeQueue.fifo

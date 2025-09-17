@@ -1,0 +1,35 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudFormation template to create a FIFO SQS Queue with Dead-Letter Queue
+
+Resources:
+  MyDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: MyDLQ.fifo
+      FifoQueue: true
+      MessageRetentionPeriod: 1209600  # 14 days
+
+  MyFIFOQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: MyFIFOQueue.fifo
+      FifoQueue: true
+      ContentBasedDeduplication: true
+      VisibilityTimeout: 30
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt MyDLQ.Arn
+        maxReceiveCount: 5
+
+Outputs:
+  FIFOQueueURL:
+    Description: "URL of the FIFO Queue"
+    Value: !Ref MyFIFOQueue
+  FIFOQueueARN:
+    Description: "ARN of the FIFO Queue"
+    Value: !GetAtt MyFIFOQueue.Arn
+  DLQURL:
+    Description: "URL of the Dead Letter Queue"
+    Value: !Ref MyDLQ
+  DLQARN:
+    Description: "ARN of the Dead Letter Queue"
+    Value: !GetAtt MyDLQ.Arn

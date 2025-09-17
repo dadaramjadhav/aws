@@ -1,0 +1,44 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: FIFO SNS topic and FIFO SQS queue with subscription
+
+Resources:
+
+  EmployeeSNSTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: EmployeeTopic.fifo
+      FifoTopic: true
+      ContentBasedDeduplication: true  # optional, deduplicates messages automatically
+
+  EmployeeSQSQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: EmployeeQueue.fifo
+      FifoQueue: true
+      ContentBasedDeduplication: true  # optional, deduplicates messages automatically
+
+  SQSPolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      Queues:
+        - !Ref EmployeeSQSQueue
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowSNSPublish
+            Effect: Allow
+            Principal:
+              Service: sns.amazonaws.com
+            Action: sqs:SendMessage
+            Resource: !GetAtt EmployeeSQSQueue.Arn
+            Condition:
+              ArnEquals:
+                aws:SourceArn: !Ref EmployeeSNSTopic
+
+  EmployeeSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Ref EmployeeSNSTopic
+      Protocol: sqs
+      Endpoint: !GetAtt EmployeeSQSQueue.Arn
+      RawMessageDelivery: true
