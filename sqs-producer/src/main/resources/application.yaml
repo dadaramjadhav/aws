@@ -7,13 +7,6 @@ spring:
         profile-name: default
       stack:
         auto: false
-      sqs:
-        listener:
-          task-executor-bean-name: sqsListenerTaskExecutor
-          # max-concurrency: 5
-          # min-concurrency: 2
-          # max-messages-per-poll: 10
-          # wait-time: 20
 
 app:
   sqs:
