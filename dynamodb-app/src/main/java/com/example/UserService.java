@@ -9,9 +9,17 @@ import org.springframework.stereotype.Service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.BillingMode;
+import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.GetItemResponse;
+import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
+import software.amazon.awssdk.services.dynamodb.model.KeyType;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.ResourceNotFoundException;
+import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 
 @Service
 @AllArgsConstructor
@@ -21,17 +29,17 @@ public class UserService {
 	private final DynamoDbClient dynamoDbClient;
 	private final String TABLE_NAME = "Users";
 
-//	public void createTableIfNotExists() {
-//		try {
-//			dynamoDbClient.describeTable(DescribeTableRequest.builder().tableName(TABLE_NAME).build());
-//		} catch (ResourceNotFoundException e) {
-//			dynamoDbClient.createTable(CreateTableRequest.builder().tableName(TABLE_NAME)
-//					.keySchema(KeySchemaElement.builder().attributeName("userId").keyType(KeyType.HASH).build())
-//					.attributeDefinitions(AttributeDefinition.builder().attributeName("userId")
-//							.attributeType(ScalarAttributeType.S).build())
-//					.billingMode(BillingMode.PAY_PER_REQUEST).build());
-//		}
-//	}
+	public void createTableIfNotExists() {
+		try {
+			dynamoDbClient.describeTable(DescribeTableRequest.builder().tableName(TABLE_NAME).build());
+		} catch (ResourceNotFoundException e) {
+			dynamoDbClient.createTable(CreateTableRequest.builder().tableName(TABLE_NAME)
+					.keySchema(KeySchemaElement.builder().attributeName("userId").keyType(KeyType.HASH).build())
+					.attributeDefinitions(AttributeDefinition.builder().attributeName("userId")
+							.attributeType(ScalarAttributeType.S).build())
+					.billingMode(BillingMode.PAY_PER_REQUEST).build());
+		}
+	}
 
 	public void createUser(User user) {
 		log.info("Creating user: {}", user);
