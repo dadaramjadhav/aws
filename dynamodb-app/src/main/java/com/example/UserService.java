@@ -20,6 +20,8 @@ import software.amazon.awssdk.services.dynamodb.model.KeyType;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.ResourceNotFoundException;
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
+import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
+import software.amazon.awssdk.services.dynamodb.model.ScanResponse;
 
 @Service
 @AllArgsConstructor
@@ -51,7 +53,21 @@ public class UserService {
 	}
 
 	public List<User> getAllUsers() {
-		return null;
+		log.info("Getting all users");
+		 ScanResponse scanResponse = dynamoDbClient.scan(
+		            ScanRequest.builder()
+		                       .tableName(TABLE_NAME)
+		                       .build());
+
+		    return scanResponse.items().stream()
+		            .map(item -> {
+		                User user = new User();
+		                user.setUserId(item.get("userId").s());
+		                user.setName(item.get("name").s());
+		                user.setEmail(item.get("email").s());
+		                return user;
+		            })
+		            .toList();
 	}
 
 	public User getUserById(String id) {
