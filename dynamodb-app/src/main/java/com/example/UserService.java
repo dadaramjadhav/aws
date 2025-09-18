@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.GetItemResponse;
@@ -14,7 +15,7 @@ import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 
 @Service
 @AllArgsConstructor
-
+@Slf4j
 public class UserService {
 
 	private final DynamoDbClient dynamoDbClient;
@@ -33,11 +34,11 @@ public class UserService {
 //	}
 
 	public void createUser(User user) {
+		log.info("Creating user: {}", user);
 		Map<String, AttributeValue> item = new HashMap<>();
 		item.put("userId", AttributeValue.fromS(user.getUserId()));
 		item.put("name", AttributeValue.fromS(user.getName()));
 		item.put("email", AttributeValue.fromS(user.getEmail()));
-
 		dynamoDbClient.putItem(PutItemRequest.builder().tableName(TABLE_NAME).item(item).build());
 	}
 
@@ -46,6 +47,7 @@ public class UserService {
 	}
 
 	public User getUserById(String id) {
+		log.info("Getting user by id: {}", id);
 		Map<String, AttributeValue> key = Map.of("userId", AttributeValue.fromS(id));
 		GetItemResponse resp = dynamoDbClient.getItem(r -> r.tableName(TABLE_NAME).key(key));
 		if (resp.hasItem()) {
