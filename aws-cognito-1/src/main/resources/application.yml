@@ -1,0 +1,20 @@
+server:
+  port: 8082
+
+spring:
+    security:
+        oauth2:
+            client:
+                registration:
+                    cognito:
+                        client-id: 6pk738a8petlabpg5vglf99amp
+#                        client-secret: 19n1mv1veerqnc3qhn59b18q3oqp37fg7dcbh9vcrf2acgngsdfl
+                        scope:
+                        - email
+                        - openid
+                        - phone
+                        redirect-uri: http://localhost:8082/login/oauth2/code/cognito
+                provider:
+                    cognito:
+                        issuerUri: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_ua48hk4Op
+#                        user-name-attribute: username
